@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <h1>Audio</h1>
+        <select value="" id="audio" onchange="onSelect(event)">
+
+        </select>
+    </div>
+    <div>
+        <h1>Video</h1>
+        <select value="" id="video">
+
+        </select>
+    </div>
+
+    <video id="vid" autoplay="true" style="min-height: 300px; min-width: 300px;"></video>
+    <script>
+
+        var vid = document.getElementById("vid");
+        navigator.mediaDevices.getUserMedia({ video: { width: 300, height: 300, frameRate: 30 }, audio: { echoCancellation: true, noiseSuppression: true, }, }).then(
+            stream => {
+                vid.srcObject = stream;
+            }
+        )
+
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            devices.forEach(e => {
+                console.log(e);
+                if (e.kind === "audioinput") {
+                    let n = document.createElement("option");
+                    n.value = e.deviceId;
+                    n.textContent = e.deviceId;
+                    document.getElementById("audio").append(n);
+                } else if (e.kind === "videoinput") {
+                    let n = document.createElement("option");
+                    n.textContent = e.deviceId;
+                    document.getElementById("video").append(n);
+                }
+
+
+            });
+        })
+
+        function onSelect(e) {
+
+            navigator.mediaDevices.getUserMedia({ video: { deviceId: e.target.value, width: 300, height: 300, frameRate: 30 }, audio: { echoCancellation: true, noiseSuppression: true, }, }).then(
+                stream => {
+                    vid.srcObject = stream;
+                }
+            )
+        }
+
+    </script>
+</body>
+
+</html>
